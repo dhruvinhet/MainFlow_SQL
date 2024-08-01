@@ -1,0 +1,44 @@
+A database is an organized collection of data stored and managed electronically on a computer system. It's like a digital filing cabinet,
+but instead of paper files, it holds information in a structured format. This structure makes it efficient to store, retrieve, update, 
+and manage large amounts of data.
+
+I learned introduction to SQL elements such as Literals, Datatype, NULLs and comments.
+Also understanding of SQL syntax and structure using DDL and DML.
+SQL (Structured Query Language) is a standard language used to interact with relational databases.It allows users to define, manipulate, control, and query data in databases.
+Basic SQL syntax consists of statements that perform specific tasks. Common commands include SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, and DROP.
+
+
+
+
+
+
+SELECT customer_name, order_date
+FROM orders
+WHERE order_total > 1000;
+
+SELECT: Specifies the columns to retrieve.
+FROM: Indicates the table to query.
+WHERE: Filters the data based on specified conditions.
+
+
+
+CREATE TABLE:Creates a new table with specified columns and data types.
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    email VARCHAR(100)
+);
+
+
+
+ALTER TABLE:Modifies an existing table by adding, dropping, or modifying columns.
+ALTER TABLE customers ADD phone_number VARCHAR(20);
+
+
+
+DROP TABLE:Deletes an entire table and its data.
+DROP TABLE customers;
+
+
+
+
