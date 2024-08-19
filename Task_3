@@ -1,0 +1,161 @@
+mysql> use task3;
+Database changed
+mysql> CREATE TABLE Employees (
+    ->     EmployeeID int,
+    ->     Name varchar(255),
+    ->     Age int,
+    ->     Gender varchar(10),
+    ->     DepartmentID int,
+    ->     Salary decimal
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TABLE Departments (
+    ->     DepartmentID int,
+    ->     DepartmentName varchar(255),
+    ->     Location varchar(255)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> CREATE TABLE Projects (
+    ->     ProjectID int,
+    ->     ProjectName varchar(255),
+    ->     DepartmentID int,
+    ->     Budget decimal
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+mysql> INSERT INTO Employees (EmployeeID, Name, Age, Gender, DepartmentID, Salary)
+    -> VALUES
+    -> (1, 'Smit', 30, 'Male', 1, 50000),
+    -> (2, 'Yash', 25, 'Female', 2, 60000),
+    -> (3, 'Mike', 28, 'Male', 1, 55000),
+    -> (4, 'Rajdeep', 35, 'Male', 4, 70000),
+    -> (5, 'Rajdeep', 35, 'Male', 4, 70000);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Departments (DepartmentID, DepartmentName, Location)
+    -> VALUES
+    -> (1, 'HR', 'New York'),
+    -> (2, 'Finance', 'London'),
+    -> (3, 'Engineering', 'San Francisco'),
+    -> (4, 'Marketing', 'Chicago');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Projects (ProjectID, ProjectName, DepartmentID, Budget)
+    -> VALUES
+    -> (101, 'Project Alpha', 1, 100000),
+    -> (102, 'Project Beta', 2, 150000),
+    -> (103, 'Project Gamma', 3, 200000),
+    -> (104, 'Project Delta', 4, 250000),
+    -> (105, 'Project Epsilon', 1, 120000);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM Employees;
++------------+---------+------+--------+--------------+--------+
+| EmployeeID | Name    | Age  | Gender | DepartmentID | Salary |
++------------+---------+------+--------+--------------+--------+
+|          1 | Smit    |   30 | Male   |            1 |  50000 |
+|          2 | Yash    |   25 | Female |            2 |  60000 |
+|          3 | Mike    |   28 | Male   |            1 |  55000 |
+|          4 | Rajdeep |   35 | Male   |            4 |  70000 |
+|          5 | Rajdeep |   35 | Male   |            4 |  70000 |
++------------+---------+------+--------+--------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Departments;
++--------------+----------------+---------------+
+| DepartmentID | DepartmentName | Location      |
++--------------+----------------+---------------+
+|            1 | HR             | New York      |
+|            2 | Finance        | London        |
+|            3 | Engineering    | San Francisco |
+|            4 | Marketing      | Chicago       |
++--------------+----------------+---------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Projects;
++-----------+-----------------+--------------+--------+
+| ProjectID | ProjectName     | DepartmentID | Budget |
++-----------+-----------------+--------------+--------+
+|       101 | Project Alpha   |            1 | 100000 |
+|       102 | Project Beta    |            2 | 150000 |
+|       103 | Project Gamma   |            3 | 200000 |
+|       104 | Project Delta   |            4 | 250000 |
+|       105 | Project Epsilon |            1 | 120000 |
++-----------+-----------------+--------------+--------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT Employees.Name, Employees.Age, Departments.DepartmentName, Departments.Location
+    -> FROM Employees
+    -> INNER JOIN Departments ON Employees.DepartmentID = Departments.DepartmentID;
++---------+------+----------------+----------+
+| Name    | Age  | DepartmentName | Location |
++---------+------+----------------+----------+
+| Smit    |   30 | HR             | New York |
+| Yash    |   25 | Finance        | London   |
+| Mike    |   28 | HR             | New York |
+| Rajdeep |   35 | Marketing      | Chicago  |
+| Rajdeep |   35 | Marketing      | Chicago  |
++---------+------+----------------+----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT Employees.Name, Employees.Age, Departments.DepartmentName, Departments.Location
+    -> FROM Employees
+    -> LEFT JOIN Departments ON Employees.DepartmentID = Departments.DepartmentID;
++---------+------+----------------+----------+
+| Name    | Age  | DepartmentName | Location |
++---------+------+----------------+----------+
+| Smit    |   30 | HR             | New York |
+| Yash    |   25 | Finance        | London   |
+| Mike    |   28 | HR             | New York |
+| Rajdeep |   35 | Marketing      | Chicago  |
+| Rajdeep |   35 | Marketing      | Chicago  |
++---------+------+----------------+----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT Employees.Name, Employees.Age, Departments.DepartmentName, Departments.Location
+    -> FROM Employees
+    -> RIGHT JOIN Departments ON Employees.DepartmentID = Departments.DepartmentID;
++---------+------+----------------+---------------+
+| Name    | Age  | DepartmentName | Location      |
++---------+------+----------------+---------------+
+| Mike    |   28 | HR             | New York      |
+| Smit    |   30 | HR             | New York      |
+| Yash    |   25 | Finance        | London        |
+| NULL    | NULL | Engineering    | San Francisco |
+| Rajdeep |   35 | Marketing      | Chicago       |
+| Rajdeep |   35 | Marketing      | Chicago       |
++---------+------+----------------+---------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT Employees.Name, Departments.DepartmentName
+    -> FROM Employees
+    -> CROSS JOIN Departments;
++---------+----------------+
+| Name    | DepartmentName |
++---------+----------------+
+| Smit    | Marketing      |
+| Smit    | Engineering    |
+| Smit    | Finance        |
+| Smit    | HR             |
+| Yash    | Marketing      |
+| Yash    | Engineering    |
+| Yash    | Finance        |
+| Yash    | HR             |
+| Mike    | Marketing      |
+| Mike    | Engineering    |
+| Mike    | Finance        |
+| Mike    | HR             |
+| Rajdeep | Marketing      |
+| Rajdeep | Engineering    |
+| Rajdeep | Finance        |
+| Rajdeep | HR             |
+| Rajdeep | Marketing      |
+| Rajdeep | Engineering    |
+| Rajdeep | Finance        |
+| Rajdeep | HR             |
++---------+----------------+
+20 rows in set (0.00 sec)
