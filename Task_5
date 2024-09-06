@@ -1,0 +1,170 @@
+mysql> create database task5;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> use task5;
+Database changed
+mysql> CREATE TABLE Employees (
+    ->     EmployeeID INT PRIMARY KEY,
+    ->     Name VARCHAR(100),
+    ->     Salary DECIMAL(10, 2),
+    ->     DOB DATE,
+    ->     Gender CHAR(1),
+    ->     HireDate DATE,
+    ->     DepartmentID INT
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO Employees (EmployeeID, Name, Salary, DOB, Gender, HireDate, DepartmentID) VALUES
+    -> (1, 'Amit Sharma', 65000, '1965-10-15', 'M', '2009-04-10', 1),
+    -> (2, 'Suman Verma', 85000, '1970-07-20', 'F', '2012-06-18', 2),
+    -> (3, 'Ravi Kumar', 78000, '1985-11-25', 'M', '2016-09-09', 3),
+    -> (4, 'Neha Singh', 120000, '1982-03-19', 'F', '2018-05-11', 1),
+    -> (5, 'Rajesh Gupta', 90000, '1992-08-07', 'M', '2019-07-22', 4),
+    -> (6, 'Pooja Iyer', 65000, '1975-12-15', 'F', '2011-12-05', 3),
+    -> (7, 'Kiran Reddy', 72000, '1968-09-27', 'F', '2010-03-10', 2),
+    -> (8, 'Arjun Menon', 98000, '1990-05-30', 'M', '2017-01-14', 4),
+    -> (9, 'Meera Patil', 86000, '1985-02-21', 'F', '2014-12-02', 1),
+    -> (10, 'Mohit Chawla', 110000, '1991-09-12', 'M', '2020-03-01', 2);
+Query OK, 10 rows affected (0.00 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE Departments (
+    ->     DepartmentID INT PRIMARY KEY,
+    ->     DepartmentName VARCHAR(100)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> INSERT INTO Departments (DepartmentID, DepartmentName) VALUES
+    -> (1, 'Human Resources'),
+    -> (2, 'Finance'),
+    -> (3, 'Information Technology'),
+    -> (4, 'Marketing');
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE Employees
+    -> ADD CONSTRAINT FK_Department
+    -> FOREIGN KEY (DepartmentID)
+    -> REFERENCES Departments(DepartmentID);
+Query OK, 10 rows affected (0.06 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> SELECT MAX(Salary) AS SecondHighestSalary
+    -> FROM Employees
+    -> WHERE Salary < (SELECT MAX(Salary) FROM Employees);
++---------------------+
+| SecondHighestSalary |
++---------------------+
+|           110000.00 |
++---------------------+
+1 row in set (0.00 sec)
+mysql> SELECT DepartmentID, MAX(Salary) AS MaxSalary
+    -> FROM Employees
+    -> GROUP BY DepartmentID;
++--------------+-----------+
+| DepartmentID | MaxSalary |
++--------------+-----------+
+|            1 | 120000.00 |
+|            2 | 110000.00 |
+|            3 |  78000.00 |
+|            4 |  98000.00 |
++--------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT CASE
+    ->     WHEN STR_TO_DATE('2024-09-06', '%Y-%m-%d') IS NOT NULL
+    ->     THEN 'Valid Date'
+    ->     ELSE 'Invalid Date'
+    -> END AS DateCheck;
++------------+
+| DateCheck  |
++------------+
+| Valid Date |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT CURRENT_DATE;
++--------------+
+| CURRENT_DATE |
++--------------+
+| 2024-09-06   |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT DISTINCT Name
+    -> FROM Employees
+    -> WHERE DOB BETWEEN '1960-01-01' AND '1975-12-31';
++-------------+
+| Name        |
++-------------+
+| Amit Sharma |
+| Suman Verma |
+| Pooja Iyer  |
+| Kiran Reddy |
++-------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT Gender, COUNT(*) AS EmployeeCount
+    -> FROM Employees
+    -> WHERE DOB BETWEEN '1960-01-01' AND '1975-12-31'
+    -> GROUP BY Gender;
++--------+---------------+
+| Gender | EmployeeCount |
++--------+---------------+
+| M      |             1 |
+| F      |             3 |
++--------+---------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT Name
+    -> FROM Employees
+    -> WHERE Salary >= 10000;
++--------------+
+| Name         |
++--------------+
+| Amit Sharma  |
+| Suman Verma  |
+| Ravi Kumar   |
+| Neha Singh   |
+| Rajesh Gupta |
+| Pooja Iyer   |
+| Kiran Reddy  |
+| Arjun Menon  |
+| Meera Patil  |
+| Mohit Chawla |
++--------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT Name
+    -> FROM Employees
+    -> WHERE Name LIKE 'M%';
++--------------+
+| Name         |
++--------------+
+| Meera Patil  |
+| Mohit Chawla |
++--------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT *
+    -> FROM Employees
+    -> WHERE LOWER(Name) LIKE '%joe%';
+Empty set (0.00 sec)
+
+mysql> SELECT EXTRACT(YEAR FROM HireDate) AS HireYear
+    -> FROM Employees;
++----------+
+| HireYear |
++----------+
+|     2009 |
+|     2012 |
+|     2016 |
+|     2018 |
+|     2019 |
+|     2011 |
+|     2010 |
+|     2017 |
+|     2014 |
+|     2020 |
++----------+
+10 rows in set (0.00 sec)
