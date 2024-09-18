@@ -1,0 +1,189 @@
+mysql> use task6;
+Database changed
+mysql> CREATE TABLE customers (
+    ->     customer_id INT PRIMARY KEY,
+    ->     customer_name VARCHAR(100),
+    ->     email VARCHAR(100),
+    ->     phone_number VARCHAR(15),
+    ->     address VARCHAR(255)
+    -> );
+Query OK, 0 rows affected (0.21 sec)
+
+mysql> CREATE TABLE products (
+    ->     product_id INT PRIMARY KEY,
+    ->     product_name VARCHAR(100),
+    ->     price DECIMAL(10, 2)
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TABLE orders (
+    ->     order_id INT PRIMARY KEY,
+    ->     customer_id INT,
+    ->     product_id INT,
+    ->     order_total DECIMAL(10, 2),
+    ->     order_time DATETIME
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> ALTER TABLE orders
+    -> ADD CONSTRAINT fk_customer
+    -> FOREIGN KEY (customer_id)
+    -> REFERENCES customers(customer_id);
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE orders
+    -> ADD CONSTRAINT fk_product
+    -> FOREIGN KEY (product_id)
+    -> REFERENCES products(product_id);
+Query OK, 0 rows affected (0.04 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO customers (customer_id, customer_name, email, phone_number, address)
+    -> VALUES
+    -> (1, 'Rahul Sharma', 'rahul@example.com', '9876543210', 'Delhi'),
+    -> (2, 'Sita Verma', 'sita@example.com', '9822334455', 'Mumbai'),
+    -> (3, 'Amit Kumar', 'amit@example.com', '9900112233', 'Chennai'),
+    -> (4, 'Geeta Patel', 'geeta@example.com', '9811223344', 'Kolkata'),
+    -> (5, 'Ravi Singh', 'ravi@example.com', '9870065423', 'Bangalore');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO products (product_id, product_name, price)
+    -> VALUES
+    -> (101, 'Laptop', 55000),
+    -> (102, 'Mobile Phone', 20000),
+    -> (103, 'Headphones', 2000),
+    -> (104, 'Tablet', 15000),
+    -> (105, 'Smart Watch', 5000);
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO orders (order_id, customer_id, product_id, order_total, order_time)
+    -> VALUES
+    -> (1, 1, 101, 55000, '2024-09-01 14:30:00'),
+    -> (2, 2, 102, 20000, '2024-09-02 11:15:00'),
+    -> (3, 3, 103, 2000, '2024-09-02 17:00:00'),
+    -> (4, 4, 104, 15000, '2024-09-03 10:45:00'),
+    -> (5, 5, 105, 5000, '2024-09-03 16:00:00'),
+    -> (6, 1, 102, 20000, '2024-09-04 09:30:00'),
+    -> (7, 3, 105, 5000, '2024-09-04 14:20:00'),
+    -> (8, 2, 101, 55000, '2024-09-05 18:50:00');
+Query OK, 8 rows affected (0.01 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+mysql> desc customers;
++---------------+--------------+------+-----+---------+-------+
+| Field         | Type         | Null | Key | Default | Extra |
++---------------+--------------+------+-----+---------+-------+
+| customer_id   | int          | NO   | PRI | NULL    |       |
+| customer_name | varchar(100) | YES  |     | NULL    |       |
+| email         | varchar(100) | YES  |     | NULL    |       |
+| phone_number  | varchar(15)  | YES  |     | NULL    |       |
+| address       | varchar(255) | YES  |     | NULL    |       |
++---------------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> desc products;
++--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| product_id   | int           | NO   | PRI | NULL    |       |
+| product_name | varchar(100)  | YES  |     | NULL    |       |
+| price        | decimal(10,2) | YES  |     | NULL    |       |
++--------------+---------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> desc orders;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| order_id    | int           | NO   | PRI | NULL    |       |
+| customer_id | int           | YES  | MUL | NULL    |       |
+| product_id  | int           | YES  | MUL | NULL    |       |
+| order_total | decimal(10,2) | YES  |     | NULL    |       |
+| order_time  | datetime      | YES  |     | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(*) AS total_orders FROM orders;
++--------------+
+| total_orders |
++--------------+
+|            8 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT AVG(order_total) AS average_order_value FROM orders;
++---------------------+
+| average_order_value |
++---------------------+
+|        22125.000000 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT product_id, COUNT(*) AS order_count
+    -> FROM orders
+    -> GROUP BY product_id
+    -> ORDER BY order_count DESC
+    -> LIMIT 5;
++------------+-------------+
+| product_id | order_count |
++------------+-------------+
+|        101 |           2 |
+|        102 |           2 |
+|        105 |           2 |
+|        103 |           1 |
+|        104 |           1 |
++------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT p.product_name, COUNT(*) AS total_purchases
+    -> FROM orders o
+    -> JOIN products p ON o.product_id = p.product_id
+    -> GROUP BY p.product_name
+    -> ORDER BY total_purchases DESC
+    -> LIMIT 5;
++--------------+-----------------+
+| product_name | total_purchases |
++--------------+-----------------+
+| Laptop       |               2 |
+| Mobile Phone |               2 |
+| Smart Watch  |               2 |
+| Headphones   |               1 |
+| Tablet       |               1 |
++--------------+-----------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT HOUR(order_time) AS order_hour, COUNT(*) AS order_count
+    -> FROM orders
+    -> GROUP BY order_hour
+    -> ORDER BY order_count DESC;
++------------+-------------+
+| order_hour | order_count |
++------------+-------------+
+|         14 |           2 |
+|         11 |           1 |
+|         17 |           1 |
+|         10 |           1 |
+|         16 |           1 |
+|          9 |           1 |
+|         18 |           1 |
++------------+-------------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT product_name, COUNT(*) AS order_count, AVG(order_total) AS average_order_value
+    -> FROM orders o
+    -> JOIN products p ON o.product_id = p.product_id
+    -> GROUP BY product_name
+    -> ORDER BY order_count DESC;
++--------------+-------------+---------------------+
+| product_name | order_count | average_order_value |
++--------------+-------------+---------------------+
+| Laptop       |           2 |        55000.000000 |
+| Mobile Phone |           2 |        20000.000000 |
+| Smart Watch  |           2 |         5000.000000 |
+| Headphones   |           1 |         2000.000000 |
+| Tablet       |           1 |        15000.000000 |
++--------------+-------------+---------------------+
+5 rows in set (0.00 sec)
